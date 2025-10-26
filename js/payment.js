@@ -153,6 +153,15 @@ const createPaymentModal = () => {
     </div>
   `;
   document.body.appendChild(wrap);
+  // Harden input types and autocomplete to improve privacy
+  const setAttrs = (id, attrs) => { const el = document.getElementById(id); if (!el) return; Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v)); };
+  setAttrs('mmName', { type: 'text', autocomplete: 'name' });
+  setAttrs('mmEmail', { type: 'email', autocomplete: 'email' });
+  setAttrs('mmPhone', { type: 'tel', inputmode: 'numeric', autocomplete: 'tel' });
+  setAttrs('mmMt5', { type: 'text', inputmode: 'numeric' });
+  setAttrs('mmInvestor', { type: 'password', autocomplete: 'new-password' });
+  setAttrs('mmBroker', { type: 'text' });
+  setAttrs('mmServer', { type: 'text' });
 };
 
 const createInvoiceOverlay = () => {
@@ -274,18 +283,25 @@ const closePaymentModal = () => document.getElementById('paymentModal').classLis
 const openInvoice = () => {
   // fill summaries
   const sc = document.getElementById('summaryCustomer');
+  const E = (s) => String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;')
+    .replace(/`/g,'&#96;');
   sc.innerHTML = `
-    <div class="info-row"><span>نام:</span><span>${customerInfo.fullName}</span></div>
-    <div class="info-row"><span>ایمیل:</span><span>${customerInfo.email}</span></div>
-    <div class="info-row"><span>تلفن:</span><span>${customerInfo.phone}</span></div>
-    <div class="info-row"><span>MT5:</span><span>${customerInfo.mt5Account}</span></div>
-    <div class="info-row"><span>Investor:</span><span>${customerInfo.investorPassword}</span></div>
+    <div class="info-row"><span>نام:</span><span>${E(customerInfo.fullName)}</span></div>
+    <div class="info-row"><span>ایمیل:</span><span>${E(customerInfo.email)}</span></div>
+    <div class="info-row"><span>تلفن:</span><span>${E(customerInfo.phone)}</span></div>
+    <div class="info-row"><span>MT5:</span><span>${E(customerInfo.mt5Account)}</span></div>
+    <div class="info-row"><span>Investor:</span><span>${E(customerInfo.investorPassword)}</span></div>
   `;
   const sp = document.getElementById('summaryPlan');
   sp.innerHTML = `
-    <div class="info-row"><span>پلن:</span><span>${selectedPlan}</span></div>
+    <div class="info-row"><span>پلن:</span><span>${E(selectedPlan)}</span></div>
     <div class="info-row"><span>روش پرداخت:</span><span id="summaryMethodTxt">${paymentMethod === 'card' ? 'کارت‌به‌کارت' : 'USDT'}</span></div>
-    <div class="info-row"><span>قیمت اولیه:</span><span>${selectedPrice}</span></div>
+    <div class="info-row"><span>قیمت اولیه:</span><span>${E(selectedPrice)}</span></div>
   `;
   document.getElementById('summaryMethod').textContent = paymentMethod === 'card' ? 'کارت‌به‌کارت (ریالی)' : 'USDT (BEP20)';
   updateSummaryPrice();

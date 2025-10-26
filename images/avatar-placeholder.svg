@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="User Avatar">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0b12"/>
+      <stop offset="100%" stop-color="#141426"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="64" fill="url(#bgGrad)"/>
+  <!-- Head -->
+  <circle cx="64" cy="52" r="22" fill="#bdbdc7"/>
+  <!-- Shoulders -->
+  <path d="M24 112c0-22 18-36 40-36s40 14 40 36" fill="#9a9aa6"/>
+</svg>

@@ -7,7 +7,7 @@ const SUPABASE_URL = 'https://fsrkmahzufdgcrrffpey.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzcmttYWh6dWZkZ2NycmZmcGV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3MDIxMDgsImV4cCI6MjA2OTI3ODEwOH0.yW6FEwBpG9-SU8eI7BSguosqAYKb5uVM2bSyW-avO6g';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const USD_TO_IRR = 105000;
+const USD_TO_IRR = 104000; // نرخ تبدیل دلار به تومان
 
 // State
 let selectedPlan = '3 Months';
@@ -109,7 +109,7 @@ const createPaymentModal = () => {
       <div class="mmodal-body">
         <div class="hint">پلن انتخابی: <span id="mmodalSelectedPlan"></span> — قیمت: <span id="mmodalSelectedPrice"></span></div>
         <div class="mmodal-radio" role="group" aria-label="روش پرداخت">
-          <label><input type="radio" name="payMethod" value="card" checked> کارت‌به‌کارت (ریالی)</label>
+          <label><input type="radio" name="payMethod" value="card" checked> کارت‌به‌کارت (تومانی)</label>
           <label><input type="radio" name="payMethod" value="usdt"> USDT (BEP20)</label>
         </div>
         <div class="mmodal-grid">
@@ -303,7 +303,7 @@ const openInvoice = () => {
     <div class="info-row"><span>روش پرداخت:</span><span id="summaryMethodTxt">${paymentMethod === 'card' ? 'کارت‌به‌کارت' : 'USDT'}</span></div>
     <div class="info-row"><span>قیمت اولیه:</span><span>${E(selectedPrice)}</span></div>
   `;
-  document.getElementById('summaryMethod').textContent = paymentMethod === 'card' ? 'کارت‌به‌کارت (ریالی)' : 'USDT (BEP20)';
+  document.getElementById('summaryMethod').textContent = paymentMethod === 'card' ? 'کارت‌به‌کارت (تومانی)' : 'USDT (BEP20)';
   updateSummaryPrice();
   // toggle confirmations
   document.getElementById('confirmSenderWrap').style.display = paymentMethod === 'card' ? 'block' : 'none';
@@ -323,8 +323,12 @@ const updateSummaryPrice = () => {
   const originalUSD = parseUSD(selectedPrice);
   const finalUSD = calculateFinalUSD();
   const finalUSDStr = formatUSD(finalUSD);
-  const originalIRR = Math.round(originalUSD * USD_TO_IRR).toLocaleString('fa-IR');
-  const finalIRR = Math.round(finalUSD * USD_TO_IRR).toLocaleString('fa-IR');
+  // محاسبه دقیق قیمت‌ها به تومان
+const originalTomanValue = Math.floor(originalUSD * USD_TO_IRR);
+const finalTomanValue = Math.floor(finalUSD * USD_TO_IRR);
+// نمایش اعداد به فرمت فارسی بدون صفر اضافی
+const originalToman = originalTomanValue.toLocaleString('fa-IR');
+const finalToman = finalTomanValue.toLocaleString('fa-IR');
 
   let html = '';
   const infoEl = document.getElementById('discountInfo');
@@ -336,16 +340,16 @@ const updateSummaryPrice = () => {
     if (infoEl) infoEl.textContent = 'کد تخفیف با موفقیت اعمال شد.';
     html = `
       <div class="info-row"><span>قیمت اولیه (USD):</span><span style="text-decoration:line-through">${formatUSD(originalUSD)}</span></div>
-      <div class="info-row"><span>قیمت اولیه (ریال):</span><span style="text-decoration:line-through">${originalIRR} ریال</span></div>
+      <div class="info-row"><span>قیمت اولیه (تومان):</span><span style="text-decoration:line-through">${originalToman} تومان</span></div>
       <div class="info-row"><span>تخفیف اعمال‌شده:</span><span>${dLabel}</span></div>
       <div class="info-row"><span>قیمت نهایی (USD):</span><span>${finalUSDStr}</span></div>
-      <div class="info-row"><span>قیمت نهایی (ریال):</span><span>${finalIRR} ریال</span></div>
+      <div class="info-row"><span>قیمت نهایی (تومان):</span><span>${finalToman} تومان</span></div>
     `;
   } else {
     if (infoEl) infoEl.textContent = '';
     html = `
       <div class="info-row"><span>قیمت (USD):</span><span>${formatUSD(originalUSD)}</span></div>
-      <div class="info-row"><span>قیمت (ریال):</span><span>${originalIRR} ریال</span></div>
+      <div class="info-row"><span>قیمت (تومان):</span><span>${originalToman} تومان</span></div>
     `;
   }
 
